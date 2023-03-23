@@ -8,6 +8,8 @@ This project uses express-session for user session management
 
 Copy .env.example file to .env and configure the variables.
 
+If you want to enable user registration, set REGISTER_OPEN to `yes`
+
 Execute: 
 
 ```npm run install``` 

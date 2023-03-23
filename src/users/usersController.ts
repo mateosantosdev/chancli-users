@@ -71,6 +71,11 @@ export const createDemo = async (req: Request, res: Response) =>
 
 export const register = async (req: Request, res: Response) => {
   try {
+    if (process.env.REGISTER_OPEN === "no" || !process.env.REGISTER_OPEN) {
+      res.status(400).json("Registration is disabled");
+      return;
+    }
+
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -111,7 +116,7 @@ export const logout = async (req: Request, res: Response) => {
 
 export const profile = async (req: Request, res: Response) => {
   try {
-    if (!req.session.user?.id){
+    if (!req.session.user?.id) {
       throw {
         code: 401,
         message: "Authentication required",
@@ -121,8 +126,8 @@ export const profile = async (req: Request, res: Response) => {
     if (!user) {
       throw {
         code: 404,
-        message: "User not found"
-      }
+        message: "User not found",
+      };
     }
     const { password, role, ...response } = user;
     res.json(response);
@@ -148,8 +153,11 @@ export const updateOwnEmail = async (req: Request, res: Response) => {
         message: "This email is being used",
       };
     }
-    
-    const updatedUser: User | null = await userService.update({id: req.session.user!.id, email})
+
+    const updatedUser: User | null = await userService.update({
+      id: req.session.user!.id,
+      email,
+    });
 
     res.json({
       id: updatedUser?.id,
@@ -158,7 +166,7 @@ export const updateOwnEmail = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(400).json(error);
   }
-}
+};
 
 export const updateOwnPassword = async (req: Request, res: Response) => {
   try {
@@ -170,15 +178,15 @@ export const updateOwnPassword = async (req: Request, res: Response) => {
         message: "Password required",
       };
     }
-    
+
     const updatedUser: User | null = await userService.update({
       id: req.session.user!.id,
-      password
+      password,
     });
 
     res.json({
       id: updatedUser?.id,
-      email: updatedUser?.email
+      email: updatedUser?.email,
     });
   } catch (error: any) {
     res.status(400).json(error);
