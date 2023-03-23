@@ -8,7 +8,7 @@ export const DBDataSource = new DataSource({
   password: process.env.DB_PASS,
   database: process.env.DB_DATABASE,
   entities: ["src/entity/*.ts", "dist/**/*.entity.js"],
-  logging: true,
+  logging: process.env.ENVIRONMENT === "development",
   synchronize: true,
   extra: {
     ssl: {
