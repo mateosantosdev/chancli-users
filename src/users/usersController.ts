@@ -111,6 +111,7 @@ export const logout = async (req: Request, res: Response) => {
     }
   });
 
+  res.clearCookie("connect.sid", { path: "/" });
   res.json({success: true});
 };
 
