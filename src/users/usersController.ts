@@ -111,7 +111,7 @@ export const logout = async (req: Request, res: Response) => {
     }
   });
 
-  res.send("Logout success");
+  res.json({success: true});
 };
 
 export const profile = async (req: Request, res: Response) => {
