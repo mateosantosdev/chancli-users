@@ -7,11 +7,20 @@ import { DBDataSource } from "./db/db";
 
 import session from "express-session";
 import { UserSession } from "./users/usersTypes";
+import { User } from "./entity/user";
 
 declare module "express-session" {
   interface SessionData {
     user: UserSession;
   }
+}
+
+declare global {
+    namespace Express {
+        export interface Request {
+            user?: User;
+        }
+    }
 }
 
 DBDataSource.initialize()
