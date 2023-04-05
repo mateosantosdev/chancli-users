@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { User } from "../entity/user";
 import { UserApi } from "./usersApi";
 import { compare } from "bcrypt";
@@ -32,6 +33,7 @@ export const getById = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
+    const { sign } = jwt;
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -54,13 +56,22 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const { id, email: userEmail, role } = userByEmail;
-    req.session.user = {
+    const userData = {
       id,
       email: userEmail,
       role,
     };
+    req.session.user = userData;
 
-    res.json(userByEmail);
+    // JWT support
+    const token = sign(userData, process.env.SESSION_SECRET!, {
+      expiresIn: 3600 * 24,
+    });
+
+    res.json({
+      user: userData,
+      token,
+    });
   } catch (error: any) {
     res.status(400).json(error);
   }
@@ -112,7 +123,7 @@ export const logout = async (req: Request, res: Response) => {
   });
 
   res.clearCookie("connect.sid", { path: "/" });
-  res.json({success: true});
+  res.json({ success: true });
 };
 
 export const profile = async (req: Request, res: Response) => {
